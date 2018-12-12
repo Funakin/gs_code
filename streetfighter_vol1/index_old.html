@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>じゃんけんアプリ</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon.ico">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ************************************ -->
+    <!-- get audio -->
+    <!-- ************************************ -->
+
+    <audio src="sound/hado_p.m4a" id="hado_audio_p"></audio>
+    <audio src="sound/shoryu_p.m4a" id="shoryu_audio_p"></audio>
+    <audio src="sound/ko1.mp3" id="damage"></audio>
+    <audio src="sound/gong-played2.mp3" id="gong"></audio>
+    <audio src="sound/jump1.mp3" id="jump"></audio>
+    
+
+    <!-- ************************************ -->
+    <!-- svg -->
+    <!-- ************************************ -->
+
+    <div id="root_div">
+        <div id="div_wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs>
+
+                <!-- ************************************ -->
+                <!-- 定義 -->
+                <!-- ************************************ -->
+
+                    <!-- jumpパス -->
+                    <path d="m0,0 s300,-250 420,-100" id="p_jump" fill="none" stroke="black" />
+                    <path d="m0,0 s-300,-250 -420,-100" id="e_jump" fill="none" stroke="black" />
+                    <!-- 波動拳（プレイヤー）パス -->
+                    <path d="m0,0 l15,5" id="p_hado_head_path" fill="none" stroke="black" />
+                    <path d="m0,0 l15,5" id="p_hado_body_path" fill="none" stroke="black" />
+                    <path d="m0,0 l-15,5" id="e_hado_head_path" fill="none" stroke="black" />
+                    <path d="m0,0 l-15,5" id="e_hado_body_path" fill="none" stroke="black" />
+                    <!-- 昇竜拳パス -->
+                    <path d="m0,0 l30,-60" id="p_shoryu_path" fill="none" stroke="black" />
+                    <path d="m0,0 l-30,-60" id="e_shoryu_path" fill="none" stroke="black" />
+                    <!-- 波動拳オブジェクト&パス -->
+                    <circle id="c" r="3"/>
+                    <path d="m0,0 s40,-5 50,-50" fill="none" stroke="black" id="hado1" />
+                    <path d="m0,0 s50,0 60,-40" fill="none" stroke="black" id="hado2" />
+                    <path d="m0,0 s30,-50 40,-60" fill="none" stroke="black" id="hado3" />
+                    <path d="m0,0 s40,5 50,50" fill="none" stroke="black" id="hado4" />
+                    <path d="m0,0 s50,0 60,40" fill="none" stroke="black" id="hado5" />
+                    <path d="m0,0 s30,50 40,60" fill="none" stroke="black" id="hado6" />
+
+                    <rect id="r" width="50" height="10" stroke="white" stroke-width="2" fill="#ff99ff" />
+                    <path d="m0,0 l350,0" fill="none" stroke="black" id="p_hado_line" />
+                    <path d="m0,0 l-400,0" id="e_hado_line" />
+
+                    <!-- ダメージ -->
+                    <circle id="c_damage" r="30" stroke="gold" stroke-width="10" fill="lightyellow"/>
+                    <rect id="r_damage" width="200" height="20" stroke="gold" fill="gold"/>
+                </defs>
+
+                <!-- ************************************ -->
+                <!-- player -->
+                <!-- ************************************ -->
+
+                <circle cx="100" cy="250" r="20" fill="#ffffff" id="head">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_p_head">
+                        <mpath xlink:href="#p_jump" />
+                    </animateMotion>
+                    <animateMotion dur="0.5s" begin="indefinite" id="hado_p_head">
+                        <mpath xlink:href="#p_hado_head_path" />
+                    </animateMotion>
+                    <animateMotion dur="0.7s" begin="indefinite" id="shoryu_p_head">
+                        <mpath xlink:href="#p_shoryu_path" />
+                    </animateMotion>
+                </circle>
+                <line x1="100" y1="270" x2="100" y2="330" stroke="#ffffff" stroke-width="5px" id="body">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_p_body">
+                        <mpath xlink:href="#p_jump" />
+                    </animateMotion>
+                    <animateMotion dur="0.5s" begin="indefinite" id="hado_p_body">
+                        <mpath xlink:href="#p_hado_body_path" />
+                    </animateMotion>
+                    <animateMotion dur="0.7s" begin="indefinite" id="shoryu_p_body">
+                        <mpath xlink:href="#p_shoryu_path" />
+                    </animateMotion>
+                </line>
+                <polyline points="100,280 80,310 120,310" stroke="#ffffff" stroke-width="5px" fill="none" stroke-linecap="round" id="rarm">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_p_rarm">
+                        <mpath xlink:href="#p_jump" />
+                    </animateMotion>
+                    <animate attributeName="points" to="115,285 140,310, 160,310" dur="0.5s" begin="indefinite" id="hado_p_rarm" />
+                    <animate attributeName="points" to="130,220 155,200, 170,150" dur="0.7s" begin="indefinite" id="shoryu_p_rarm" />
+                </polyline>
+                <polyline points="100,280 120,300 140,300" stroke="#ffffff" stroke-width="5px" fill="none" stroke-linecap="round" id="larm">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_p_larm">
+                        <mpath xlink:href="#p_jump" />
+                    </animateMotion>
+                    <animate attributeName="points" to="115,285 145,300, 165,300" dur="0.5s" begin="indefinite" id="hado_p_larm" />
+                    <animate attributeName="points" to="130,220 100,250, 105,240" dur="0.7s" begin="indefinite" id="shoryu_p_larm" />
+                </polyline>
+                <polyline points="100,330 80,350 80,370" stroke="#ffffff" stroke-width="5px" fill="none" stroke-linecap="round" id="rleg">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_p_rleg">
+                        <mpath xlink:href="#p_jump" />
+                    </animateMotion>
+                    <animate attributeName="points" to="115,335 80,350, 80,370" dur="0.5s" begin="indefinite" id="hado_p_rleg" />
+                    <animate attributeName="points" to="130,270 170,280, 130,295" dur="0.7s" begin="indefinite" id="shoryu_p_rleg" />
+                </polyline>
+                <polyline points="100,330 120,350 120,370" stroke="#ffffff" stroke-width="5px" fill="none" stroke-linecap="round" id="lleg">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_p_lleg">
+                        <mpath xlink:href="#p_jump" />
+                    </animateMotion>
+                    <animate attributeName="points" to="115,335 140,350, 155,370" dur="0.5s" begin="indefinite" id="hado_p_lleg" />
+                    <animate attributeName="points" to="130,270 125,300, 115,350" dur="0.7s" begin="indefinite" id="shoryu_p_lleg" />
+                </polyline>
+
+                <!-- ************************************ -->
+                <!-- enemy -->
+                <!-- ************************************ -->
+
+                <circle cx="600" cy="250" r="20" fill="red" id="ehead">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_e_head">
+                        <mpath xlink:href="#e_jump" />
+                    </animateMotion>
+                    <animateMotion dur="0.5s" begin="indefinite" id="hado_e_head">
+                        <mpath xlink:href="#e_hado_head_path" />
+                    </animateMotion>
+                    <animateMotion dur="0.7s" begin="indefinite" id="shoryu_e_head">
+                        <mpath xlink:href="#e_shoryu_path" />
+                    </animateMotion>
+                </circle>
+                <line x1="600" y1="270" x2="600" y2="330" stroke="red" stroke-width="5px" id="ebody">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_e_body">
+                        <mpath xlink:href="#e_jump" />
+                    </animateMotion>
+                    <animateMotion dur="0.5s" begin="indefinite" id="hado_e_body">
+                        <mpath xlink:href="#e_hado_body_path" />
+                    </animateMotion>
+                    <animateMotion dur="0.7s" begin="indefinite" id="shoryu_e_body">
+                        <mpath xlink:href="#e_shoryu_path" />
+                    </animateMotion>
+                </line>
+                <polyline points="600,280 580,300 560,300" stroke="red" stroke-width="5px" fill="none" stroke-linecap="round" id="erarm">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_e_rarm">
+                        <mpath xlink:href="#e_jump" />
+                    </animateMotion>
+                    <animate attributeName="points" to="585,285 555,300, 535,300" dur="0.5s" begin="indefinite" id="hado_e_rarm" />
+                    <animate attributeName="points" to="570,220 600,250, 595,240" dur="0.7s" begin="indefinite" id="shoryu_e_rarm" />
+                </polyline>
+                <polyline points="600,280 620,310 580,310" stroke="red" stroke-width="5px" fill="none" stroke-linecap="round" id="elarm">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_e_larm">
+                        <mpath xlink:href="#e_jump" />
+                    </animateMotion>
+                    <animate attributeName="points" to="585,285 560,310, 540,310" dur="0.5s" begin="indefinite" id="hado_e_larm" />
+                    <animate attributeName="points" to="570,220 545,200, 530,150" dur="0.7s" begin="indefinite" id="shoryu_e_larm" />
+                </polyline>
+                <polyline points="600,330 580,350 580,370" stroke="red" stroke-width="5px" fill="none" stroke-linecap="round" id="erleg">
+                    <animateMotion dur="1s" begin="indefinite" id="jump_e_rleg">
+                        <mpath xlink:href="#e_jump" />
+                    </animateMotion>
+                    <animate attributeName="points" to="585,335 560,350, 545,370" dur="0.5s" begin="indefinite" id="hado_e_rleg" />
+                    <animate attributeName="points" to="570,270 575,300, 585,350" dur="0.7s" begin="indefinite" id="shoryu_e_rleg" />
+                </polyline>
+                <polyline points="600,330 620,350 620,370" stroke="red" stroke-width="5px" fill="none" stroke-linecap="round" id="elleg">
+                        <animateMotion dur="1s" begin="indefinite" id="jump_e_lleg">
+                            <mpath xlink:href="#e_jump" />
+                        </animateMotion>
+                        <animate attributeName="points" to="585,335 620,350, 620,370" dur="0.5s" begin="indefinite" id="hado_e_lleg" />
+                        <animate attributeName="points" to="570,270 530,280, 570,295" dur="0.7s" begin="indefinite" id="shoryu_e_lleg" />
+                    </polyline>
+
+                <!-- ************************************ -->
+                <!-- text -->
+                <!-- ************************************ -->
+
+                <text dominant-baseline="middle" text-anchor="middle" x="350" y="200" font-size="60px" font-weight="bold" fill="#ff99ff" opacity="0">YOU WIN<animate attributeName="opacity" begin="indefinite"  to="0.9" dur="2s" id="win" /></text>
+                <text dominant-baseline="middle" text-anchor="middle" x="350" y="200" font-size="60px" font-weight="bold" fill="#ff99ff" opacity="0">YOU LOSE<animate attributeName="opacity" begin="indefinite"  to="0.9" dur="2s" id="lose" /></text>
+                <text dominant-baseline="middle" text-anchor="middle" x="350" y="200" font-size="60px" font-weight="bold" fill="#ff99ff" opacity="0">DRAW GAME<animate attributeName="opacity" begin="indefinite"  to="0.9" dur="2s" id="draw" /></text>
+
+                <!-- ************************************ -->
+                <!-- hado-ken -->
+                <!-- ************************************ -->
+                <g></g>
+                <use xlink:href="#c" x="165" y="300" fill="#ff99ff" opacity="0">
+                    <animateMotion dur="1s" begin="indefinite" id="hado_ani1">
+                        <mpath xlink:href="#hado1" />
+                    </animateMotion>
+                    <animate attributeName="opacity" begin="indefinite"  to="1" dur="1" id="hado1_opa" />
+                </use>
+                <use xlink:href="#c" x="165" y="300" fill="#ff99ff" opacity="0">
+                    <animateMotion dur="1s" begin="indefinite" id="hado_ani2">
+                        <mpath xlink:href="#hado2" />
+                    </animateMotion>
+                    <animate attributeName="opacity" begin="indefinite"  to="1" dur="1" id="hado2_opa" />
+                </use>
+                <use xlink:href="#c" x="165" y="300" fill="#ff99ff" opacity="0">
+                    <animateMotion dur="1s" begin="indefinite" id="hado_ani3">
+                        <mpath xlink:href="#hado3" />
+                    </animateMotion>
+                    <animate attributeName="opacity" begin="indefinite"  to="1" dur="1" id="hado3_opa" />
+                </use>
+                <use xlink:href="#c" x="165" y="300" fill="#ff99ff" opacity="0">
+                    <animateMotion dur="1s" begin="indefinite" id="hado_ani4">
+                        <mpath xlink:href="#hado4" />
+                    </animateMotion>
+                    <animate attributeName="opacity" begin="indefinite"  to="1" dur="1" id="hado4_opa" />
+                </use>
+                <use xlink:href="#c" x="165" y="300" fill="#ff99ff" opacity="0">
+                    <animateMotion dur="1s" begin="indefinite" id="hado_ani5">
+                        <mpath xlink:href="#hado5" />
+                    </animateMotion>
+                    <animate attributeName="opacity" begin="indefinite"  to="1" dur="1" id="hado5_opa" />
+                </use>
+                <use xlink:href="#c" x="165" y="300" fill="#ff99ff" opacity="0">
+                    <animateMotion dur="1s" begin="indefinite" id="hado_ani6">
+                        <mpath xlink:href="#hado6" />
+                    </animateMotion>
+                    <animate attributeName="opacity" begin="indefinite"  to="1" dur="1" id="hado6_opa" />
+                </use>
+                <use xlink:href="#r" x="165" y="300" opacity="0">
+                    <animateMotion dur="2s" begin="indefinite" id="hado_ani7">
+                        <mpath xlink:href="#p_hado_line" />
+                    </animateMotion>
+                    <animate attributeName="opacity" begin="indefinite" to="1" dur="2" id="p_hado_line_opa1" />
+                </use>
+                <use xlink:href="#r" x="165" y="280" opacity="0">
+                    <animateMotion dur="2s" begin="indefinite" id="hado_ani8">
+                        <mpath xlink:href="#p_hado_line" />
+                    </animateMotion>
+                    <animate attributeName="opacity" begin="indefinite"  to="1" dur="2" id="p_hado_line_opa2" />
+                </use>
+                <use xlink:href="#r" x="165" y="320" opacity="0">
+                    <animateMotion dur="2s" begin="indefinite" id="hado_ani9">
+                        <mpath xlink:href="#p_hado_line" />
+                    </animateMotion>
+                    <animate attributeName="opacity" begin="indefinite"  to="1" dur="2" id="p_hado_line_opa3" />
+                </use>
+
+                <!-- ************************************ -->
+                <!-- damage -->
+                <!-- ************************************ -->
+                <g id="g_p_hado_damage" opacity="0">
+                    <use xlink:href="#c_damage" x="580" y="300"/>
+                    <use xlink:href="#r_damage" x="410" y="150" transform="rotate(40,410,150)"/>
+                    <use xlink:href="#r_damage" x="360" y="260" transform="rotate(10,360,260)"/>
+                    <use xlink:href="#r_damage" x="480" y="500" transform="rotate(-65,480,500)"/>
+                    <use xlink:href="#r_damage" x="630" y="80" transform="rotate(100,630,80)"/>
+                    <use xlink:href="#r_damage" x="610" y="300" transform="rotate(30,610,300)"/>
+
+                    <animate attributeName="opacity" begin="indefinite" to="1" dur="0.5" id="p_hado_damage" />
+                </g>
+                <g id="g_p_shoryu_damage" opacity="0">
+                    <use xlink:href="#c_damage" x="170" y="150"/>
+                     <!-- original x580, y300 -->
+                    <use xlink:href="#r_damage" x="0" y="0" transform="rotate(40,0,0)"/>
+                    <use xlink:href="#r_damage" x="-90" y="110" transform="rotate(10,-90,110)"/>
+                    <use xlink:href="#r_damage" x="70" y="350" transform="rotate(-65,70,350)"/>
+                    <use xlink:href="#r_damage" x="220" y="-70" transform="rotate(100,220,-70)"/>
+                    <use xlink:href="#r_damage" x="210" y="150" transform="rotate(30,210,150)"/>
+
+                    <animate attributeName="opacity" begin="indefinite" to="1" dur="0.5" id="p_shoryu_damage" />
+                </g>
+
+            </svg>
+        </div>
+    </div>
+
+    <!-- ************************************ -->
+    <!-- button -->
+    <!-- ************************************ -->
+
+    <div id="btn_wrapper">
+        <div style="text-align: center;">
+            <a href="#" id="jump_btn"><span class="fa fa-map-pin" pointer-events="none"></span></a>
+            <p>ジャンプ攻撃</p>
+        </div>
+        <div style="text-align: center;">
+            <a href="#" id="hado_btn"><span class="fa fa-hockey-puck" pointer-events="none"></span></a>
+            <p>波動拳</p>
+        </div>
+        <div style="text-align: center;">
+            <a href="#" id="shoryu_btn"><span class="fa fa-hockey-puck" pointer-events="none"></span></a>
+            <p>昇竜拳</p>
+        </div>
+    </div>
+
+    <!-- ************************************ -->
+    <!-- gauge -->
+    <!-- ************************************ -->
+
+    <!-- <meter id="p_meter" max="100" min="0" value="100"></meter> -->
+
+
+
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="js/snap.svg-min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
